@@ -1,0 +1,75 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <%= render partial: 'spree/shared/head' %>
+  </head>
+  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+    <%= render partial: 'spree/shared/google_analytics.js' %>
+    <%= render partial: 'spree/shared/header' %>
+
+    <div class="container">
+      <div class="row">
+        <%=link_to "Sign Up", "https://dev.monetrack.com", class: "btn btn-success test-sub" %>
+      </div>
+      <div class="row" data-hook>
+        <%= breadcrumbs(@taxon) %>
+
+        <%= render partial: 'spree/shared/sidebar' if content_for? :sidebar %>
+
+        <div id="content" class="<%= !content_for?(:sidebar) ? "col-sm-12" : "col-sm-8 col-md-9" %>" data-hook>
+          <%= flash_messages %>
+          <%= yield %>
+        </div>
+
+        <%= yield :templates %>
+
+        <script type='text/javascript'>
+          (function(d) {
+            var scriptTrack = document.createElement('script');
+            scriptTrack.src = 'https://dev.monetrack.com/track.maximize.js';
+            scriptTrack.async = true;
+            document.getElementsByTagName('head')[0].appendChild(scriptTrack);
+          })(document);
+        </script>
+
+        <%= yield :monetrack_script %>
+
+        <%= render_search_lead_img %>
+        <%= render_signup_lead_img %>
+        <%= render_signin_lead_img %>
+        <%= render_logout_lead_img %>
+
+        <script>
+          //For test lead transaction
+          $(document).ready(function(){
+            $('#existing-customer #new_spree_user').on('submit', function(){
+              document.cookie="signup=1"
+            });
+
+            $('#new-customer #new_spree_user').on('submit', function(){
+              document.cookie="signin=1"
+            });
+
+            $('[href="/logout"]').on('click', function(){
+              document.cookie="logout=1"
+            });
+          })
+        </script>
+      </div>
+    </div>
+    <script>
+      // case test change process sign_up
+      $(".test-sub").on('click',function(e){
+        if(MTCookie.getHttpCookie("current_visitor_id")||MTCookie.getHttpCookie("current_parent_id")){
+          var urlReload='https://dev.monetrack.com/ja?locale=ja&change_language=true'+'&visitor_id='+MTCookie.getHttpCookie("current_visitor_id")+'&parent_id='+MTCookie.getHttpCookie("current_parent_id");
+          window.open(urlReload,'_blank');
+          return false;
+        }
+      });
+    </script>
+  </body>
+</html>
